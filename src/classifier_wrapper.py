@@ -26,7 +26,7 @@ class ClassifierWrapper:
         #############################################################################################
         # INITIALISATION PLMFT
         #############################################################################################
-        # print("Init PLMFT...")
+        print("Init PLMFT...")
         self.classifier = PLMClassifier(n_test=cfg.n_test, n_train=cfg.n_train, model_name="camembert-base", device=cfg.device)
 
 
@@ -53,7 +53,7 @@ class ClassifierWrapper:
         # ENTRAÎNEMENT POUR PLMFT
         #############################################################################################
         # Appel au train (changer les hyperparamètres batch_size, learning_rate, et epochs pour optimiser les performances)
-        self.classifier.train(train_data=train_data, val_data=val_data, batch_size=1, epochs=1, lr=5e-5)
+        self.classifier.train(train_data=train_data, val_data=val_data, batch_size=32 , epochs=10 , lr=5e-5)
 
 
 
@@ -86,7 +86,7 @@ class ClassifierWrapper:
         batch_size = 16  # Taille des lots à ajuster 
         for i in tqdm(range(0, len(texts), batch_size)):
             batch_texts = texts[i:i + batch_size]
-            batch_opinions = self.classifier.predict(batch_texts)  # Prédiction par lot
+            batch_opinions = self.classifier.predict(batch_texts, device)  # Prédiction par lot
             all_opinions.extend(batch_opinions)
             
         return all_opinions

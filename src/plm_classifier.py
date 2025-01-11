@@ -141,24 +141,30 @@ class PLMClassifier:
             accuracy = correct / total_samples # on calcule la précision
             print(f"Validation Accuracy for {aspect}: {accuracy:.4f}") # on affiche la précision
             
-    def predict(self, text: str) -> dict[str,str]:
+    def predict(self, texts: list[str], device: int) -> list[dict]:
         """
-        Prédit les opinions pour chaque aspect d'un avis donné.
-        :param text: le texte de l'avis
-        :return: un dictionnaire python avec une entrée pour chacun des 4 aspects ayant pour valeur une des
+        Prédit les opinions pour chaque aspect d'une liste d'avis.
+        :param texts: liste des textes des avis
+        :param device: device: un nombre qui identifie le numéro de la gpu sur laquelle le traitement doit se faire
+        -1 veut dire que le device est la cpu, et un nombre entier >= 0 indiquera le numéro de la gpu à utiliser
+        :return: une liste de dictionnaires python avec une entrée pour chacun des aspects ayant pour valeur une des
         4 valeurs possibles pour l'opinion (Positive, Négative, Neutre et NE)
         """
-        encodings = self.tokenizer( # on convertit le texte en séquence numérique
-            text, truncation=True, padding=True, max_length=512, return_tensors="pt"
-        ).to(self.device) # on déplace les données sur le device
+        self.model.eval() # on met le modèle en mode évaluation
+        encodings = self.tokenizer( # on convertit les textes en séquences numériques
+            texts, truncation=True, padding=True, max_length=512, return_tensors="pt"
+        ).to(self.device)
 
-        with torch.no_grad(): # pas de calcul de gradient
-            logits = self.model(input_ids=encodings["input_ids"], attention_mask=encodings["attention_mask"]) # on fait une prédiction
+        with torch.no_grad(): # pas de calcul de gradient pour la prédiction
+            logits = self.model(input_ids=encodings["input_ids"], attention_mask=encodings["attention_mask"])
 
-        preds = {aspect: torch.argmax(logits[aspect], dim=-1).item() for aspect in logits} # on récupère les prédictions
-        result = {aspect: self.inverse_map_label(pred) for aspect, pred in preds.items()} # on mappe les prédictions en texte
+        preds = []
+        for i in range(len(texts)): # pour chaque texte
+            pred = {aspect: torch.argmax(logits[aspect][i], dim=-1).item() for aspect in logits}
+            result = {aspect: self.inverse_map_label(pred[aspect]) for aspect in pred}
+            preds.append(result)
         
-        return result # on retourne le résultat
+        return preds
 
 
     def parse_json_response(self, response: str) -> dict[str, str] | None:
