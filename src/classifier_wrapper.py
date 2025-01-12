@@ -53,7 +53,7 @@ class ClassifierWrapper:
         # ENTRAÎNEMENT POUR PLMFT
         #############################################################################################
         # Appel au train (changer les hyperparamètres batch_size, learning_rate, et epochs pour optimiser les performances)
-        self.classifier.train(train_data=train_data, val_data=val_data, batch_size=32 , epochs=15, lr=5e-5)
+        self.classifier.train(train_data=train_data, val_data=val_data, batch_size=32 , epochs=7, lr=5e-5)
 
 
 
