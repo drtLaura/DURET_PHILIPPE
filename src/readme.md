@@ -36,11 +36,14 @@ Cette stratégie garantit une compréhension fine des nuances linguistiques prop
 
 ---
 
-### **Hyper-paramètres**  
-- **Taille du Batch** : 32 (max)  
-- **Nombre d’Époques** : 10 à 18 (selon les expérimentations)  
-- **Learning Rate** : `5e-5`  
-- **Dropout** : [Dropout rate] à préciser  
+## **Hyperparamètres meilleur résultat**  
+- **Nombre d’Époques** :  15
+- **Taille du Batch** :  32
+- **Échantillons** :  Toutes les données disponibles dans train, test et val
+- **Résultats** :  
+  - **Précisions pour toutes les itérations** : 
+  - **Précision Moyenne Macro (AVG MACRO ACC)** : **X%**  
+  - **Temps Total d’Exécution** : **Xs**  
 
 ---
 
@@ -54,51 +57,18 @@ Cette stratégie garantit une compréhension fine des nuances linguistiques prop
 
 ---
 
-## **Meilleur résultat**  
-- **Nombre d’Époques** :  
-- **Taille du Batch** :  
-- **Échantillons** :  
+
+## **Autre résultat**  
+
+- **Modèle** :  gemma2:2b
 - **Résultats** :  
-  - **Précisions pour toutes les itérations** : 
-  - **Précision Moyenne Macro (AVG MACRO ACC)** : **X%**  
-  - **Temps Total d’Exécution** : **Xs**  
+ALL RUNS ACC: [67.07]
+AVG MACRO ACC: 67.07
+TOTAL EXEC TIME: 1419.5
 
-
-Les expérimentations ont été réalisées sur différentes configurations (nombre d’échantillons, époques). Voici les résultats obtenus :  
-
-### **1ère Configuration**  
-- **Nombre d’Époques** : 10  
-- **Taille du Batch** : 32  
-- **Échantillons** : 100 et 400  
+- **Modèle** :  smollm2:1.7b
 - **Résultats** :  
-  - **Précisions pour toutes les itérations** : [75.25, 75.5, 78.5]  
-  - **Précision Moyenne Macro (AVG MACRO ACC)** : **76.42%**  
-  - **Temps Total d’Exécution** : **868.9s**  
-
----
-
-### **2ᵉ Configuration**  
-- **Nombre d’Époques** : 15  
-- **Taille du Batch** : 32 (max)  
-- **Échantillons** : 300 et 1000  
-- **Résultats** :  
-  - **Précisions pour toutes les itérations** : [80.17, 79.83, 80.08]  
-  - **Précision Moyenne Macro (AVG MACRO ACC)** : **80.03%**  
-  - **Temps Total d’Exécution** : **3238.2s**  
-
----
-
-### **3ᵉ Configuration**  
-- **Nombre d’Époques** : 18  
-- **Taille du Batch** : 32  
-- **Échantillons** : 150 et 500  
-- **Résultats** :  
-  - **Précisions pour toutes les itérations** : [78.0, 80.17, 78.0]  
-  - **Précision Moyenne Macro (AVG MACRO ACC)** : **78.72%**  
-  - **Temps Total d’Exécution** : **1807.7s**  
-
----
-
-### **Résumé Global**  
-
---- 
+ALL RUNS ACC: [37.72]
+AVG MACRO ACC: 37.72
+TOTAL EXEC TIME: 1096.7
+  

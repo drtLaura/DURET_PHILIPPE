@@ -21,7 +21,7 @@ class ClassifierWrapper:
         #############################################################################################
         # INITIALISATION LLM
         #############################################################################################
-        # self.classifier = LLMClassifier(cfg)
+        #self.classifier = LLMClassifier(cfg)
 
         #############################################################################################
         # INITIALISATION PLMFT
@@ -53,7 +53,7 @@ class ClassifierWrapper:
         # ENTRAÎNEMENT POUR PLMFT
         #############################################################################################
         # Appel au train (changer les hyperparamètres batch_size, learning_rate, et epochs pour optimiser les performances)
-        self.classifier.train(train_data=train_data, val_data=val_data, batch_size=32 , epochs=10 , lr=5e-5)
+        self.classifier.train(train_data=train_data, val_data=val_data, batch_size=32 , epochs=15, lr=5e-5)
 
 
 
@@ -75,19 +75,18 @@ class ClassifierWrapper:
         # Comme ici on utilise un llm avce ollama, on procèdera en traitant les textes d'avis un à un
         # mais si on utilise un PLMFT, il vaut mieux traiter les avis par batch pour que ce soit plus
         # rapide
-        # for text in tqdm(texts):
+        #for text in tqdm(texts):
         #     opinions = self.classifier.predict(text)
         #     all_opinions.append(opinions)
-        # return all_opinions
+        #return all_opinions
     
         #############################################################################################
         # PREDICTION POUR PLMFT
         #############################################################################################
-        batch_size = 16  # Taille des lots à ajuster 
+        batch_size = 40 # Taille des lots à ajuster 
         for i in tqdm(range(0, len(texts), batch_size)):
             batch_texts = texts[i:i + batch_size]
             batch_opinions = self.classifier.predict(batch_texts, device)  # Prédiction par lot
-            all_opinions.extend(batch_opinions)
-            
+            all_opinions.extend(batch_opinions)    
         return all_opinions
 

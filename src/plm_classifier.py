@@ -95,11 +95,12 @@ class PLMClassifier:
 
             cpt = 1 # compteur pour afficher le numéro du batch
             for batch in train_loader: # pour chaque batch
-                print(f"Batch {cpt}/{len(train_loader)}") 
+                #print(f"Batch {cpt}/{len(train_loader)}") 
                 input_ids, attention_mask, *labels = [b.to(self.device) for b in batch] # on déplace les données sur le device
 
                 optimizer.zero_grad() # on remet à zéro les gradients
                 logits = self.model(input_ids=input_ids, attention_mask=attention_mask) # on fait une prédiction
+                scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1) # Réduction du learning rate après un certain nombre d'époques
 
                 losses = [] # liste pour stocker les pertes pour chaque aspect
                 for i, aspect in enumerate(["Prix", "Cuisine", "Service", "Ambiance"]):
@@ -113,7 +114,8 @@ class PLMClassifier:
                 total_loss += total_loss_batch.item() # on ajoute la perte du batch à la perte totale
 
                 cpt += 1 # on incrémente le compteur de batch
-
+                
+            scheduler.step()
             print(f"Loss: {total_loss / len(train_loader)}") # on affiche la perte moyenne pour l'époque
             self.validation(val_loader) # on valide le modèle sur les données de validation
 
@@ -125,22 +127,30 @@ class PLMClassifier:
         self.model.eval() # on met le modèle en mode évaluation
         total_correct = {aspect: 0 for aspect in ["Prix", "Cuisine", "Service", "Ambiance"]} # nombre total de prédictions correctes
         total_samples = 0 # nombre total d'échantillons
-
+        total_loss = 0
+        loss_fct = nn.CrossEntropyLoss() 
         with torch.no_grad():  # pas de calcul de gradient pour la validation
             for batch in val_loader:  # pour chaque batch
                 input_ids, attention_mask, *labels = [b.to(self.device) for b in batch] # on déplace les données sur le device
                 logits = self.model(input_ids=input_ids, attention_mask=attention_mask) # on fait une prédiction
-
+                
+                batch_loss= 0
                 for i, aspect in enumerate(["Prix", "Cuisine", "Service", "Ambiance"]): # pour chaque aspect
                     preds = torch.argmax(logits[aspect], dim=-1) # on récupère les prédictions
+                    batch_loss +=loss_fct(logits[aspect],labels[i])
                     total_correct[aspect] += (preds == labels[i]).sum().item()  # on met à jour le nombre de prédictions correctes
 
+                total_loss+=batch_loss.item()
                 total_samples += labels[0].size(0) # on met à jour le nombre total d'échantillons
 
         for aspect, correct in total_correct.items(): # pour chaque aspect
             accuracy = correct / total_samples # on calcule la précision
             print(f"Validation Accuracy for {aspect}: {accuracy:.4f}") # on affiche la précision
-            
+        
+        avg_loss = total_loss/len(val_loader)
+        print(f"Validation Loss :{avg_loss:.4f}")
+    
+    
     def predict(self, texts: list[str], device: int) -> list[dict]:
         """
         Prédit les opinions pour chaque aspect d'une liste d'avis.

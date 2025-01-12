@@ -47,7 +47,9 @@ class LLMClassifier:
         self.llmclient = Client(host=cfg.ollama_url)
         # self.model_name = 'llama3.1:latest'
         # self.model_name = 'gemma2:latest'
-        self.model_name = 'gemma2:2b'
+        #self.model_name = 'gemma2:2b'
+        #self.model_name = 'llama3.2:1b'
+        self.model_name = 'smollm2:1.7b'
         self.model_options = {
             'num_predict': 500,  # max number of tokens to predict
             'temperature': 0.1,
@@ -83,6 +85,9 @@ class LLMClassifier:
                 return None
         else:
             return None
+
+
+
 
 
 
